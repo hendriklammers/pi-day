@@ -14,12 +14,14 @@ app.get('/', (req, res, next) => {
 })
 
 app.ws('/pi', (ws, req) => {
-  ws.on('message', msg => {
-    console.log(msg)
-  })
+  let count = 0
+  const interval = setInterval(() => {
+    ws.send(count)
+    count++
+  }, 1000)
 })
 
-app.listen(port, () => console.log(`Server running on port: ${port}`))
+app.listen(port, () => console.log(`Server running on port ${port}`))
 
 // const main = async () => {
 //   const piString = await util.promisify(fs.readFile)(
