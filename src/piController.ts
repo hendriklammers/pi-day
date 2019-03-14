@@ -1,10 +1,11 @@
 import fs from 'fs'
 import path from 'path'
+import util from 'util'
 import expressWs from 'express-ws'
 
 const sliceSize = 100
 const pi = fs.readFileSync(
-  path.resolve(__dirname, '../data/pi-1million.txt'),
+  path.resolve(__dirname, '../data/pi-10million.txt'),
   'utf8'
 )
 
@@ -22,17 +23,23 @@ const strToMap = (str: string): Map<number, string> => {
 
 const piMap = strToMap(pi)
 
-const handleWs: expressWs.WebsocketRequestHandler = (ws, req) => {
-  let index = 0
+const getIndex = (ws: any): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    ws.on('message', (data: string) => {
+      resolve(parseInt(JSON.parse(data).index, 10) || 0)
+    })
+  })
+}
+
+const handleWs: expressWs.WebsocketRequestHandler = async (ws, req) => {
+  let index = await getIndex(ws)
   const interval = setInterval(() => {
     ws.send(JSON.stringify({ value: piMap.get(index), index }))
     index++
-    if (index >= 3) {
+    if (index >= piMap.size - 1) {
       ws.close()
-      console.log('ws connection closed')
     }
   }, 1000)
-
   ws.on('close', () => clearInterval(interval))
 }
 
