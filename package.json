@@ -18,8 +18,13 @@
   ],
   "author": "Hendrik Lammers <lammers@gmail.com> (http://www.hendriklammers.com)",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-ws": "^4.0.0"
+  },
   "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/express-ws": "^3.0.0",
     "@types/node": "^11.11.3",
     "nodemon": "^1.18.10",
     "prettier": "^1.16.4",
