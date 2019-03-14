@@ -1,8 +1,13 @@
 const ws = new WebSocket('ws://localhost:3000/pi')
 
-document.body.innerHTML = '3.'
+let pi = '3.'
+
+const h1 = document.createElement('h1')
+document.body.appendChild(h1)
+h1.innerHTML = pi
 
 ws.addEventListener('message', ({ data }) => {
   const { value, index } = JSON.parse(data)
-  document.body.innerHTML += value
+  pi += value
+  h1.innerHTML = pi
 })

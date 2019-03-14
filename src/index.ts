@@ -7,7 +7,8 @@ import expressWs from 'express-ws'
 const { app } = expressWs(express())
 const port = process.env.PORT || 3000
 
-app.use(express.static(path.resolve(__dirname, '../lib/client')))
+app.use(express.static(path.resolve(__dirname, '../public')))
+app.use('/dist', express.static(path.resolve(__dirname, '../lib/client')))
 
 app.get('/', (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'))
@@ -25,7 +26,7 @@ const main = async () => {
     const interval = setInterval(() => {
       ws.send(JSON.stringify({ value: pi.split('')[index], index }))
       index++
-    }, 500)
+    }, 100)
 
     ws.on('close', () => clearInterval(interval))
   })
