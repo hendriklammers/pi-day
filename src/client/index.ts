@@ -1,3 +1,8 @@
 const ws = new WebSocket('ws://localhost:3000/pi')
 
-ws.addEventListener('message', event => console.log(event.data))
+document.body.innerHTML = '3.'
+
+ws.addEventListener('message', ({ data }) => {
+  const { value, index } = JSON.parse(data)
+  document.body.innerHTML += value
+})

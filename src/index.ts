@@ -13,22 +13,24 @@ app.get('/', (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'))
 })
 
-app.ws('/pi', (ws, req) => {
-  let count = 0
-  const interval = setInterval(() => {
-    ws.send(count)
-    count++
-  }, 1000)
-})
+const main = async () => {
+  const pi = await util.promisify(fs.readFile)(
+    path.resolve(__dirname, '../data/pi-1million.txt'),
+    'utf8'
+  )
 
-app.listen(port, () => console.log(`Server running on port ${port}`))
+  app.ws('/pi', (ws, req) => {
+    const ip = req.connection.remoteAddress
+    let index = 0
+    const interval = setInterval(() => {
+      ws.send(JSON.stringify({ value: pi.split('')[index], index }))
+      index++
+    }, 500)
 
-// const main = async () => {
-//   const piString = await util.promisify(fs.readFile)(
-//     path.resolve(__dirname, '../data/pi-1million.txt'),
-//     'utf8'
-//   )
-//   const piArr = piString.split('')
-// }
-//
-// main()
+    ws.on('close', () => clearInterval(interval))
+  })
+
+  app.listen(port, () => console.log(`Server running on port ${port}`))
+}
+
+main()
